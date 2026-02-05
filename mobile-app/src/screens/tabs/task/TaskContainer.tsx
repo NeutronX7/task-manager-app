@@ -69,7 +69,7 @@ export default function TasksContainer() {
                     try {
                         await deleteTask(taskId)
                     } catch (e) {
-                        
+                        console.log(e)
                     }
                 }
             }
