@@ -1,13 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import {
-    createTaskApi,
-    deleteTaskApi,
-    listTasksApi,
-    updateTaskApi,
-    type CreateTaskDTO,
-    type TaskDTO,
-    type UpdateTaskDTO
-} from '../api/task'
+import type { CreateTaskDTO, TaskDTO, UpdateTaskDTO } from '../api/task'
+import * as tasksService from '../services/tasksService'
 
 export function useTasks() {
     const [tasks, setTasks] = useState<TaskDTO[]>([])
@@ -18,29 +11,30 @@ export function useTasks() {
         try {
             setLoading(true)
             setError('')
-            const data = await listTasksApi()
+            const data = await tasksService.listTasks()
             setTasks(data)
         } catch (e: any) {
-            setError(e?.message ?? 'Error al cargar tareas')
+            setError(e?.response?.data?.message ?? e?.message ?? 'Error al cargar tareas')
         } finally {
             setLoading(false)
         }
     }, [])
 
     const createTask = useCallback(async (payload: CreateTaskDTO) => {
-        const created = await createTaskApi(payload)
+        const created = await tasksService.createTask(payload)
+
         setTasks(prev => [created, ...prev])
         return created
     }, [])
 
     const updateTask = useCallback(async (taskId: string | number, payload: UpdateTaskDTO) => {
-        const updated = await updateTaskApi(taskId, payload)
+        const updated = await tasksService.updateTask(taskId, payload)
         setTasks(prev => prev.map(t => (String(t.id) === String(taskId) ? updated : t)))
         return updated
     }, [])
 
     const deleteTask = useCallback(async (taskId: string | number) => {
-        await deleteTaskApi(taskId)
+        await tasksService.deleteTask(taskId)
         setTasks(prev => prev.filter(t => String(t.id) !== String(taskId)))
     }, [])
 

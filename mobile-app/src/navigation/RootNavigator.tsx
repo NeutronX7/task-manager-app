@@ -15,9 +15,9 @@ export default function RootNavigator({ isSignedIn }: Props) {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
             {isSignedIn ? (
-                <Stack.Screen name="App" component={AppTabs} />
+                <Stack.Screen name="App" component={AppTabs} options={{ headerShown: false }} />
             ) : (
-                <Stack.Screen name="Auth" component={AuthStack} />
+                <Stack.Screen name="Auth" component={AuthStack} options={{ headerShown: false }} />
             )}
         </Stack.Navigator>
     )

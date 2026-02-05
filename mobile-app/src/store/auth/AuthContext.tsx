@@ -32,28 +32,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, [token])
 
     useEffect(() => {
-        let mounted = true
-
-        ;(async () => {
-            try {
-                const session = await authService.restoreSession()
-                if (!mounted) return
-                setToken(session?.token ?? null)
-                setUser(session?.user ?? null)
-            } finally {
-                if (mounted) setIsLoading(false)
-            }
-        })()
-
-        return () => {
-            mounted = false
-        }
+        setIsLoading(false)
     }, [])
 
     const signIn = async (email: string, password: string) => {
         setIsLoading(true)
         try {
             const session = await authService.login(email, password)
+            setAuthToken(session.token)
             setToken(session.token)
             setUser(session.user)
         } finally {
@@ -65,6 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(true)
         try {
             const session = await authService.register(name, email, password)
+            setAuthToken(session.token)
             setToken(session.token)
             setUser(session.user)
         } finally {
@@ -76,6 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(true)
         try {
             await authService.logout()
+            setAuthToken(null)
             setToken(null)
             setUser(null)
         } finally {

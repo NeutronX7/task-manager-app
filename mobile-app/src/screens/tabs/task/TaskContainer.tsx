@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import {Alert, FlatList, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native'
 import { useTasks } from '../../../hooks/useTasks'
 import { COLORS, Statuses } from '../../../constants'
@@ -13,6 +13,10 @@ export default function TasksContainer() {
     const [saving, setSaving] = useState(false)
 
     const [query, setQuery] = useState('')
+
+    useEffect(() => {
+        refresh()
+    }, []);
 
     const filteredTasks = tasks.filter(t => {
         const q = query.trim().toLowerCase()
@@ -65,7 +69,7 @@ export default function TasksContainer() {
                     try {
                         await deleteTask(taskId)
                     } catch (e) {
-                        // si quieres, puedes mostrar toast/alert con e.message
+                        
                     }
                 }
             }
