@@ -106,12 +106,21 @@ export default function CreateTaskModal({
                     </View>
 
                     <View style={styles.field}>
-                        <Text style={styles.label}>Estado</Text>
-                        <View style={styles.chipsRow}>
-                            <Chip label="Pendiente" selected={status === Statuses.pending} onPress={() => setStatus(Statuses.pending)} />
-                            <Chip label="En progreso" selected={status === Statuses.inProgress} onPress={() => setStatus(Statuses.inProgress)} />
-                            <Chip label="Completada" selected={status === Statuses.completed} onPress={() => setStatus(Statuses.completed)} />
-                        </View>
+                        {
+                            mode === 'create' ? null
+                                : (
+                                    <>
+                                        <Text style={styles.label}>Estado</Text><View style={styles.chipsRow}>
+                                        <Chip label="Pendiente" selected={status === Statuses.pending}
+                                              onPress={() => setStatus(Statuses.pending)}/>
+                                        <Chip label="En progreso" selected={status === Statuses.inProgress}
+                                              onPress={() => setStatus(Statuses.inProgress)}/>
+                                        <Chip label="Completada" selected={status === Statuses.completed}
+                                              onPress={() => setStatus(Statuses.completed)}/>
+                                    </View>
+                                    </>
+                                )
+                        }
                     </View>
 
                     {!!apiError && <Text style={styles.apiError}>{apiError}</Text>}
