@@ -1,4 +1,5 @@
 import {loginApi, registerApi} from "../api/auth";
+import {clearSession, loadSession, saveSession} from "./sessionStorage";
 
 export type AuthUser = {
     id: string
@@ -24,16 +25,22 @@ function mapSession(data: any): AuthSession {
 
 export async function login(email: string, password: string): Promise<AuthSession> {
     const data = await loginApi({ email, password })
-    return mapSession(data)
+    const session = mapSession(data)
+    await saveSession(session)
+    return session
 }
 
 export async function register(name: string, email: string, password: string): Promise<AuthSession> {
     const data = await registerApi({ name, email, password })
-    return mapSession(data)
+    const session = mapSession(data)
+    await saveSession(session)
+    return session
 }
 
 export async function restoreSession(): Promise<AuthSession | null> {
-    return null
+    return await loadSession()
 }
 
-export async function clearSession(): Promise<void> {}
+export async function logout(): Promise<void> {
+    await clearSession()
+}

@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import * as authService from '../../services/authService'
+import { setAuthToken } from '../../api/setAuthToken'
 
 export type AuthUser = {
     id: string
     email: string
+    name?: string
 }
 
 type AuthState = {
@@ -26,7 +28,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
+        setAuthToken(token)
+    }, [token])
+
+    useEffect(() => {
         let mounted = true
+
         ;(async () => {
             try {
                 const session = await authService.restoreSession()
@@ -37,34 +44,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 if (mounted) setIsLoading(false)
             }
         })()
+
         return () => {
             mounted = false
         }
     }, [])
 
-    const signUp = async (name: string, email: string, password: string) => {
+    const signIn = async (email: string, password: string) => {
         setIsLoading(true)
         try {
-            const res = await authService.register(name, email, password)
-            setToken(res.token)
-            setUser(res.user)
+            const session = await authService.login(email, password)
+            setToken(session.token)
+            setUser(session.user)
         } finally {
             setIsLoading(false)
         }
     }
 
-    const signIn = async (email: string, password: string) => {
+    const signUp = async (name: string, email: string, password: string) => {
         setIsLoading(true)
         try {
-            const res = await authService.login(email, password)
-            console.log(res)
-            setToken(res.token)
-            setUser(res.user)
-            //await authService.persistSession(res)
-        } catch( e ) {
-            console.log(e)
-        }
-        finally {
+            const session = await authService.register(name, email, password)
+            setToken(session.token)
+            setUser(session.user)
+        } finally {
             setIsLoading(false)
         }
     }
@@ -72,23 +75,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const signOut = async () => {
         setIsLoading(true)
         try {
+            await authService.logout()
             setToken(null)
             setUser(null)
-            await authService.clearSession()
         } finally {
             setIsLoading(false)
         }
     }
 
     const value = useMemo<AuthContextValue>(
-        () => ({
-            token,
-            user,
-            isLoading,
-            signIn,
-            signOut,
-            signUp
-        }),
+        () => ({ token, user, isLoading, signIn, signUp, signOut }),
         [token, user, isLoading]
     )
 
@@ -97,6 +93,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
     const ctx = useContext(AuthContext)
-    if (!ctx) throw new Error('useAuth must be used within an AuthProvider')
+    if (!ctx) throw new Error('must be auth')
     return ctx
 }
