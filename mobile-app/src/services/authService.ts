@@ -38,7 +38,7 @@ export async function register(name: string, email: string, password: string): P
 }
 
 export async function restoreSession() {
-    return null
+    return await loadSession()
 }
 
 export async function logout(): Promise<void> {
