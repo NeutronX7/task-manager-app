@@ -116,7 +116,7 @@ No usar localhost en dispositivos físicos.
 
 2️⃣ Levantar la app móvil
 
-Desde /mobile-app:
+Desde /mobile-app (Primero se debe instalar expo):
 
 cd mobile-app
 yarn install
