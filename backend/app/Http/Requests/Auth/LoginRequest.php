@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class LoginRequest extends FormRequest
 {
+    // Permite la ejecución del request
     public function authorize(): bool
     {
         return true;
@@ -27,5 +28,4 @@ class LoginRequest extends FormRequest
             'password.required' => 'La contraseña es obligatoria.',
         ];
     }
-
 }

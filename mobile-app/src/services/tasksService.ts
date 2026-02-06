@@ -2,10 +2,11 @@ import { api } from '../api/axios'
 import type { CreateTaskDTO, TaskDTO, UpdateTaskDTO } from '../api/types'
 import {handleApiError} from "../api/handleApiError";
 
+//Obtiene la lista de tarea del usuario autenticado.
 export async function listTasks(): Promise<TaskDTO[]> {
     try {
         const { data } = await api.get('/tasks')
-        return data?.data ?? data // por si usas resource collection (data.data)
+        return data?.data ?? data
     } catch (e: any) {
         handleApiError(e)
     }

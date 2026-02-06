@@ -1,3 +1,4 @@
+// Estructura normalizada de error de API
 export type ApiError = {
     status: number
     code?: string
@@ -5,6 +6,7 @@ export type ApiError = {
     errors?: Record<string, string[]>
 }
 
+// Convierte el error HTTP en un ApiError consistente
 export function handleApiError(error: any): never {
     const status = error?.response?.status ?? 0
     const data = error?.response?.data
@@ -15,16 +17,19 @@ export function handleApiError(error: any): never {
         message: data?.message ?? 'Error inesperado',
     }
 
+    // Errores de validación por campo
     if (data?.errors) apiError.errors = data.errors
 
+    // Se relanza para que el caller lo maneje
     throw apiError
 }
 
+// Obtiene un mensaje legible para mostrar en UI
 export function getApiErrorMessage(e: unknown, fallback = 'Ocurrió un error') {
     const err = e as ApiError | any
 
     if (err?.message) {
-        // prioriza el primer error por campo si existe
+        // Prioriza el primer error de validación si existe
         const firstFieldError =
             err?.errors?.title?.[0] ||
             err?.errors?.description?.[0] ||
@@ -35,4 +40,3 @@ export function getApiErrorMessage(e: unknown, fallback = 'Ocurrió un error') {
 
     return fallback
 }
-

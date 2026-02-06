@@ -6,28 +6,28 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreTaskRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
+    // Permite que cualquier usuario autenticado ejecute el request
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
+    // Reglas de validación para crear una tarea
     public function rules(): array
     {
         return [
+            // Título obligatorio, con longitud controlada
             'title' => ['required', 'string', 'min:3', 'max:255'],
+
+            // Descripción opcional
             'description' => ['nullable', 'string', 'max:1000'],
+
+            // Estado opcional con valores permitidos
             'status' => ['nullable', 'in:pending,in_progress,completed'],
         ];
     }
 
+    // Mensajes personalizados de validación
     public function messages(): array
     {
         return [
@@ -38,5 +38,4 @@ class StoreTaskRequest extends FormRequest
             'status.in' => 'El estado es inválido.',
         ];
     }
-
 }

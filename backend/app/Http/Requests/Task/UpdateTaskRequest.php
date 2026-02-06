@@ -6,28 +6,29 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateTaskRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
+    // Permite que cualquier usuario autenticado ejecute el request
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
+    // Reglas de validación para actualizar una tarea
+    // Se usa "sometimes" para permitir updates parciales
     public function rules(): array
     {
         return [
+            // El título solo se valida si viene en el request
             'title' => ['sometimes', 'required', 'string', 'min:3', 'max:255'],
+
+            // La descripción es opcional en updates
             'description' => ['sometimes', 'nullable', 'string', 'max:1000'],
+
+            // El estado debe ser uno válido si se envía
             'status' => ['sometimes', 'required', 'in:pending,in_progress,completed'],
         ];
     }
 
+    // Mensajes personalizados de validación
     public function messages(): array
     {
         return [
