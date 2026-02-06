@@ -205,16 +205,16 @@ CI/CD para ejecución automática de tests
 ## APP FUNCIONANDO
 
 ### Login
-![Login screen](docs/screenshots/login.png)
+![Login screen](docs/screenshots/screen4.png)
 
 ### Registro
-![Register screen](docs/screenshots/register.png)
+![Register screen](docs/screenshots/screen5.png)
 
 ### Lista de tareas
-![Tasks list](docs/screenshots/tasks-list.png)
+![Tasks list](docs/screenshots/screen1.png)
 
 ### Crear tarea
-![Create task](docs/screenshots/create-task.png)
+![Create task](docs/screenshots/screen2.png)
 
 ### Editar tarea
-![Edit task](docs/screenshots/edit-task.png)
+![Edit task](docs/screenshots/screen3.png)
