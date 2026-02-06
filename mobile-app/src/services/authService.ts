@@ -1,4 +1,4 @@
-import {loginApi, registerApi} from "../api/auth";
+import {AuthResponse, loginApi, registerApi} from "../api/auth";
 import {clearSession, loadSession, saveSession} from "./sessionStorage";
 
 export type AuthUser = {
@@ -12,14 +12,14 @@ export type AuthSession = {
     user: AuthUser
 }
 
-function mapSession(data: any): AuthSession {
+function mapSession(data: AuthResponse): AuthSession {
     return {
         token: data.token,
         user: {
             id: String(data.user.id),
             email: data.user.email,
-            name: data.user.name
-        }
+            name: data.user.name,
+        },
     }
 }
 

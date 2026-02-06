@@ -9,6 +9,7 @@ import {
     View
 } from 'react-native'
 import { COLORS, Statuses } from '../constants'
+import ErrorBanner from "./ErrorBanner";
 
 type InitialTask = {
     title: string
@@ -21,6 +22,8 @@ type Props = {
     loading?: boolean
     mode: 'create' | 'edit'
     initialTask?: InitialTask
+    apiError?: string
+    onDismissApiError?: () => void
     onClose: () => void
     onSubmit: (payload: { title: string; description: string; status: Statuses }) => Promise<void> | void
 }
@@ -30,6 +33,7 @@ export default function CreateTaskModal({
                                             loading = false,
                                             mode,
                                             initialTask,
+                                            onDismissApiError,
                                             onClose,
                                             onSubmit
                                         }: Props) {
@@ -79,6 +83,17 @@ export default function CreateTaskModal({
             <View style={styles.backdrop}>
                 <View style={styles.card}>
                     <Text style={styles.title}>{mode === 'create' ? 'Nueva tarea' : 'Editar tarea'}</Text>
+
+                    {!!apiError && (
+                        <View style={{ marginTop: 10 }}>
+                            <ErrorBanner
+                                variant="error"
+                                title="No se pudo guardar"
+                                message={apiError}
+                                onDismiss={onDismissApiError}
+                            />
+                        </View>
+                    )}
 
                     <View style={styles.field}>
                         <Text style={styles.label}>Título</Text>

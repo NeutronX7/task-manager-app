@@ -15,6 +15,9 @@ export default function LoginContainer({ onGoToRegister }: Props) {
     const [loading, setLoading] = useState(false)
     const [touched, setTouched] = useState({ email: false, password: false })
     const [apiError, setApiError] = useState('')
+    const emailTrim = email.trim()
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTrim)
+    const isPasswordValid = password.trim().length > 0
 
     const emailError = useMemo(() => {
         if (!touched.email) return ''
@@ -30,10 +33,23 @@ export default function LoginContainer({ onGoToRegister }: Props) {
         return ''
     }, [password, touched.password])
 
-    const canSubmit = !emailError && !passwordError && email.trim() && !loading
+    const canSubmit =
+        !loading &&
+        isEmailValid &&
+        isPasswordValid
+
+    const handleChangeEmail = (v: string) => {
+        setEmail(v)
+        if (apiError) setApiError('')
+    }
+
+    const handleChangePassword = (v: string) => {
+        setPassword(v)
+        if (apiError) setApiError('')
+    }
 
     const handleSubmit = async () => {
-        console.log('HOLAS ')
+        setApiError('')
         setTouched({ email: true, password: true })
         if (!canSubmit) return
 
@@ -41,7 +57,13 @@ export default function LoginContainer({ onGoToRegister }: Props) {
             setLoading(true)
             await signIn(email.trim(), password)
         } catch (e: any) {
-            setApiError(e.message)
+            const msg =
+                e?.response?.data?.message ||
+                e?.response?.data?.errors?.email?.[0] ||
+                e?.message ||
+                'No se pudo iniciar sesión'
+
+            setApiError(msg)
         } finally {
             setLoading(false)
         }
@@ -54,7 +76,8 @@ export default function LoginContainer({ onGoToRegister }: Props) {
             showPassword={showPassword}
             loading={loading}
             emailError={emailError}
-            passwordError={passwordError || apiError}
+            passwordError={passwordError}
+            apiError={apiError}
             onChangeEmail={setEmail}
             onChangePassword={setPassword}
             onBlurEmail={() => setTouched(t => ({ ...t, email: true }))}
@@ -62,7 +85,7 @@ export default function LoginContainer({ onGoToRegister }: Props) {
             onToggleShowPassword={() => setShowPassword(s => !s)}
             onSubmit={handleSubmit}
             onPressRegister={onGoToRegister}
-            onPressForgotPassword={() => {}}
+            onDismissApiError={() => setApiError('')}
         />
     )
 }

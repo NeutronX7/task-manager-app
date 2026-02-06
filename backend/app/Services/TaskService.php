@@ -6,6 +6,7 @@ use App\Models\Task;
 use App\Repositories\TaskRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class TaskService
 {
@@ -29,7 +30,7 @@ class TaskService
         $task = $this->repo->findForUser($userId, $taskId);
 
         if (!$task) {
-            throw new AuthorizationException('Task not found.');
+            $this->taskNotFound();
         }
 
         return $this->repo->update($task, $data);
@@ -40,9 +41,19 @@ class TaskService
         $task = $this->repo->findForUser($userId, $taskId);
 
         if (!$task) {
-            throw new AuthorizationException('Task not found.');
+            $this->taskNotFound();
         }
 
         $this->repo->delete($task);
+    }
+
+    private function taskNotFound(): never
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'message' => 'Tarea no encontrada.',
+                'code' => 'TASK_NOT_FOUND',
+            ], 404)
+        );
     }
 }

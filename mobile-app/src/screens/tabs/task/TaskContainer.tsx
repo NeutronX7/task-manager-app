@@ -4,13 +4,17 @@ import { useTasks } from '../../../hooks/useTasks'
 import { COLORS, Statuses } from '../../../constants'
 import CreateTaskModal from '../../../components/CreateTaskModal'
 import { Pen, Trash2 } from 'lucide-react-native'
+import ErrorBanner from "../../../components/ErrorBanner";
 
 export default function TasksContainer() {
-    const { tasks, loading, error, refresh, createTask, updateTask, deleteTask } = useTasks()
+    const { tasks, loading, errors, clearError, refresh, createTask, updateTask, deleteTask } = useTasks()
 
     const [modalVisible, setModalVisible] = useState(false)
     const [modalMode, setModalMode] = useState<'create' | 'edit'>('create')
     const [saving, setSaving] = useState(false)
+    const submitError = modalMode === 'create' ? errors.create : errors.update
+    const listError = errors.list
+    const deleteError = errors.delete
 
     const [query, setQuery] = useState('')
 
@@ -88,6 +92,28 @@ export default function TasksContainer() {
                     <>
                         <Text style={styles.headerTitle}>Tus tareas</Text>
 
+                        {!!listError && (
+                            <View style={{ marginBottom: 10 }}>
+                                <ErrorBanner
+                                    variant="error"
+                                    title="No se pudieron cargar las tareas"
+                                    message={listError}
+                                    onDismiss={() => clearError('list')}
+                                />
+                            </View>
+                        )}
+
+                        {!!deleteError && (
+                            <View style={{ marginBottom: 10 }}>
+                                <ErrorBanner
+                                    variant="error"
+                                    title="No se pudo eliminar"
+                                    message={deleteError}
+                                    onDismiss={() => clearError('delete')}
+                                />
+                            </View>
+                        )}
+
                         <View style={styles.searchBox}>
                             <TextInput
                                 value={query}
@@ -101,7 +127,6 @@ export default function TasksContainer() {
                             />
                         </View>
 
-                        {!!error && <Text style={styles.errorText}>{error}</Text>}
                     </>
                 }
                 renderItem={({ item }) => (
@@ -149,7 +174,6 @@ export default function TasksContainer() {
                 }
             />
 
-            {/* FAB */}
             <Pressable style={styles.fab} onPress={openCreate}>
                 <Text style={styles.fabText}>＋</Text>
             </Pressable>
@@ -158,6 +182,8 @@ export default function TasksContainer() {
                 visible={modalVisible}
                 loading={saving}
                 mode={modalMode}
+                apiError={submitError}
+                onDismissApiError={() => clearError(modalMode === 'create' ? 'create' : 'update')}
                 initialTask={
                     editingTask
                         ? { title: editingTask.title, description: editingTask.description ?? '', status: editingTask.status }

@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class AuthService
 {
@@ -26,13 +26,16 @@ class AuthService
         $user = User::where('email', $data['email'])->first();
 
         if (!$user || !Hash::check($data['password'], $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['Invalid credentials.'],
-            ]);
+            throw new HttpResponseException(
+                response()->json([
+                    'message' => 'Credenciales inválidas, pruebe con otras.',
+                    'code' => 'AUTH_INVALID_CREDENTIALS',
+                    'errors' => [
+                        'email' => ['Credenciales inválidas.'],
+                    ],
+                ], 401)
+            );
         }
-
-        //single sesion
-        // $user->tokens()->delete();
 
         $token = $user->createToken('mobile')->plainTextToken;
 

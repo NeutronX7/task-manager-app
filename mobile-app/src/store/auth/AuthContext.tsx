@@ -25,7 +25,7 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [token, setToken] = useState<string | null>(null)
     const [user, setUser] = useState<AuthUser | null>(null)
-    const [isLoading, setIsLoading] = useState(true)
+    const [isBootstrapping, setIsBootstrapping] = useState(true)
 
     useEffect(() => {
         setAuthToken(token)
@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     setUser(null)
                 }
             } finally {
-                if (mounted) setIsLoading(false)
+                if (mounted) setIsBootstrapping(false)
             }
         })()
 
@@ -58,50 +58,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }, [])
 
-
     const signIn = async (email: string, password: string) => {
-        setIsLoading(true)
-        try {
-            const session = await authService.login(email, password)
-            setAuthToken(session.token)
-            setToken(session.token)
-            setUser(session.user)
-        } finally {
-            setIsLoading(false)
-        }
+        const session = await authService.login(email, password)
+        setAuthToken(session.token)
+        setToken(session.token)
+        setUser(session.user)
     }
 
     const signUp = async (name: string, email: string, password: string) => {
-        setIsLoading(true)
-        try {
-            const session = await authService.register(name, email, password)
-            setAuthToken(session.token)
-            setToken(session.token)
-            setUser(session.user)
-        } finally {
-            setIsLoading(false)
-        }
+        const session = await authService.register(name, email, password)
+        setAuthToken(session.token)
+        setToken(session.token)
+        setUser(session.user)
     }
 
     const signOut = async () => {
-        setIsLoading(true)
-        try {
-            await authService.logout()
-            setAuthToken(null)
-            setToken(null)
-            setUser(null)
-        } finally {
-            setIsLoading(false)
-        }
+        await authService.logout()
+        setAuthToken(null)
+        setToken(null)
+        setUser(null)
     }
 
-    const value = useMemo<AuthContextValue>(
-        () => ({ token, user, isLoading, signIn, signUp, signOut }),
-        [token, user, isLoading]
+    const value = useMemo(
+        () => ({ token, user, isLoading: isBootstrapping, signIn, signUp, signOut }),
+        [token, user, isBootstrapping]
     )
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
+
 
 export function useAuth() {
     const ctx = useContext(AuthContext)

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {
     ActivityIndicator,
     KeyboardAvoidingView,
@@ -10,6 +10,7 @@ import {
     View
 } from 'react-native'
 import {COLORS} from "../../../constants";
+import ErrorBanner from "../../../components/ErrorBanner";
 
 type Props = {
     email: string
@@ -19,6 +20,8 @@ type Props = {
 
     emailError?: string
     passwordError?: string
+    apiError?: string
+    onDismissApiError?: () => void
 
     onChangeEmail: (v: string) => void
     onChangePassword: (v: string) => void
@@ -28,7 +31,6 @@ type Props = {
     onToggleShowPassword: () => void
     onSubmit: () => void
 
-    onPressForgotPassword?: () => void
     onPressRegister?: () => void
 }
 
@@ -45,8 +47,9 @@ export default function LoginPresenter({
                                            onBlurPassword,
                                            onToggleShowPassword,
                                            onSubmit,
-                                           onPressForgotPassword,
-                                           onPressRegister
+                                           onPressRegister,
+                                           apiError,
+                                           onDismissApiError
                                        }: Props) {
     const canSubmit =
         !loading &&
@@ -58,9 +61,21 @@ export default function LoginPresenter({
         <KeyboardAvoidingView
             style={styles.root}
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+
             <View style={styles.card}>
                 <Text style={styles.title}>Bienvenido</Text>
                 <Text style={styles.subtitle}>Inicia sesión para continuar</Text>
+
+                {!!apiError && (
+                    <View style={{ marginTop: 10, marginBottom: 4 }}>
+                        <ErrorBanner
+                            variant="error"
+                            title="No se pudo iniciar sesión"
+                            message={apiError}
+                            onDismiss={onDismissApiError}
+                        />
+                    </View>
+                )}
 
                 <View style={styles.field}>
                     <Text style={styles.label}>Correo</Text>

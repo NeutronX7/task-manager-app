@@ -1,10 +1,9 @@
+// RegisterContainer.tsx
 import React, { useMemo, useState } from 'react'
 import RegisterPresenter from './RegisterPresenter'
 import { useAuth } from '../../../store/auth/AuthContext'
 
-type Props = {
-    onGoToLogin: () => void
-}
+type Props = { onGoToLogin: () => void }
 
 export default function RegisterContainer({ onGoToLogin }: Props) {
     const { signUp } = useAuth()
@@ -58,7 +57,15 @@ export default function RegisterContainer({ onGoToLogin }: Props) {
             setLoading(true)
             await signUp(name.trim(), email.trim(), password)
         } catch (e: any) {
-            setApiError(e?.message ?? 'Error al registrarse')
+            const msg =
+                e?.response?.data?.message ||
+                e?.response?.data?.errors?.email?.[0] ||
+                e?.response?.data?.errors?.password?.[0] ||
+                e?.response?.data?.errors?.name?.[0] ||
+                e?.message ||
+                'Error al registrarse'
+
+            setApiError(msg)
         } finally {
             setLoading(false)
         }
@@ -73,7 +80,9 @@ export default function RegisterContainer({ onGoToLogin }: Props) {
             loading={loading}
             nameError={nameError}
             emailError={emailError}
-            passwordError={passwordError || apiError}
+            passwordError={passwordError}
+            apiError={apiError}
+            onDismissApiError={() => setApiError('')}
             onChangeName={setName}
             onChangeEmail={setEmail}
             onChangePassword={setPassword}

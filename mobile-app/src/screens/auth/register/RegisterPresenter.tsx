@@ -10,6 +10,7 @@ import {
     View
 } from 'react-native'
 import { COLORS } from '../../../constants'
+import ErrorBanner from "../../../components/ErrorBanner";
 
 type Props = {
     name: string
@@ -21,6 +22,8 @@ type Props = {
     nameError?: string
     emailError?: string
     passwordError?: string
+    apiError?: string
+    onDismissApiError?: () => void
 
     onChangeName: (v: string) => void
     onChangeEmail: (v: string) => void
@@ -53,7 +56,9 @@ export default function RegisterPresenter({
                                               onBlurPassword,
                                               onToggleShowPassword,
                                               onSubmit,
-                                              onPressLogin
+                                              onPressLogin,
+                                              apiError,
+                                              onDismissApiError
                                           }: Props) {
     const canSubmit =
         !loading &&
@@ -70,7 +75,17 @@ export default function RegisterPresenter({
                 <Text style={styles.title}>Crear cuenta</Text>
                 <Text style={styles.subtitle}>Regístrate para empezar</Text>
 
-                {/* Name */}
+                {!!apiError && (
+                    <View style={{ marginTop: 10, marginBottom: 4 }}>
+                        <ErrorBanner
+                            variant="error"
+                            title="No se pudo crear la cuenta"
+                            message={apiError}
+                            onDismiss={onDismissApiError}
+                        />
+                    </View>
+                )}
+
                 <View style={styles.field}>
                     <Text style={styles.label}>Nombre</Text>
                     <TextInput
@@ -85,7 +100,6 @@ export default function RegisterPresenter({
                     {!!nameError && <Text style={styles.errorText}>{nameError}</Text>}
                 </View>
 
-                {/* Email */}
                 <View style={styles.field}>
                     <Text style={styles.label}>Correo</Text>
                     <TextInput
@@ -103,7 +117,6 @@ export default function RegisterPresenter({
                     {!!emailError && <Text style={styles.errorText}>{emailError}</Text>}
                 </View>
 
-                {/* Password */}
                 <View style={styles.field}>
                     <Text style={styles.label}>Contraseña</Text>
                     <View style={styles.passwordRow}>
