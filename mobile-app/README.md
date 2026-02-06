@@ -202,8 +202,19 @@ Animaciones y micro-interacciones
 
 CI/CD para ejecución automática de tests
 
-📌 Estado final
+## APP FUNCIONANDO
 
-✔ Cumple todos los requerimientos de la Serie B – Mobile App
-✔ Código funcional, probado y documentado
-✔ Arquitectura clara y escalable
+### Login
+![Login screen](docs/screenshots/login.png)
+
+### Registro
+![Register screen](docs/screenshots/register.png)
+
+### Lista de tareas
+![Tasks list](docs/screenshots/tasks-list.png)
+
+### Crear tarea
+![Create task](docs/screenshots/create-task.png)
+
+### Editar tarea
+![Edit task](docs/screenshots/edit-task.png)
