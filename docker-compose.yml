@@ -31,6 +31,25 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/var/www/html
+      
+  mobile-app:
+    build:
+      context: ./mobile-app
+      dockerfile: Dockerfile
+    container_name: manager_mobile
+    depends_on:
+      - backend
+    environment:
+      EXPO_PUBLIC_API_URL: http://backend:8000
+    ports:
+      - "19000:19000"
+      - "19001:19001"
+      - "19002:19002"
+      - "19006:19006"
+      - "8081:8081"
+    volumes:
+      - ./mobile-app:/app
+
 
 volumes:
   mysql_data:
