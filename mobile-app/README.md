@@ -207,11 +207,3 @@ CI/CD para ejecución automática de tests
 ✔ Cumple todos los requerimientos de la Serie B – Mobile App
 ✔ Código funcional, probado y documentado
 ✔ Arquitectura clara y escalable
-
-Si quieres, en el siguiente mensaje:
-
-lo pasamos a inglés formal
-
-o lo hacemos más conciso tipo TL;DR
-
-o lo alineamos palabra por palabra al texto exacto de la prueba para “cerrar boca” a cualquier evaluador 😄
