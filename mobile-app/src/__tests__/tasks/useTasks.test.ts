@@ -1,7 +1,3 @@
-import { renderHook, act, waitFor } from '@testing-library/react-native'
-import { useTasks } from '../../hooks/useTasks'
-import * as tasksService from '../../services/tasksService'
-
 /**
  * ENLACE CLAVE:
  * El hook real importa el service así:
@@ -11,6 +7,11 @@ import * as tasksService from '../../services/tasksService'
  * sean mocks y NO llamen al backend real.
  */
 jest.mock('../../services/tasksService')
+jest.mock('../../api/axios')
+
+import { renderHook, act, waitFor } from '@testing-library/react-native'
+import { useTasks } from '../../hooks/useTasks'
+import * as tasksService from '../../services/tasksService'
 
 // Se tipa mocked
 const mocked = tasksService as jest.Mocked<typeof tasksService>
@@ -172,20 +173,17 @@ describe('useTasks', () => {
     })
 
     it('si listTasks falla, setea error', async () => {
-        /**
-         * ENLACE CON HOOK:
-         * refresh() tiene try/catch y setError(...)
-         * Aquí forzamos un error en listTasks.
-         */
         mocked.listTasks.mockRejectedValueOnce(new Error('Unauthenticated.'))
 
         const { result } = renderHook(() => useTasks())
         await waitFor(() => expect(result.current.loading).toBe(false))
 
-        // Debe exponer el error como state en vez de crashear
-        expect(result.current.error).toBeTruthy()
-        expect(result.current.error).toContain('Unauthenticated')
+        // el hook guarda el error de refresh en errors.list
+        expect(result.current.errors.list).toBeTruthy()
+        expect(result.current.errors.list).toContain('Unauthenticated')
     })
+
+
 
     it('refresh() manual vuelve a pedir tareas', async () => {
         /**

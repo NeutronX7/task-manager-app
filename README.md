@@ -72,6 +72,10 @@ docker compose run --rm backend php artisan key:generate
 6️⃣ Ejecutar migraciones
 docker compose run --rm backend php artisan migrate
 
+(Opcional: seeders)
+docker compose run --rm backend php artisan db:seed   
+
+
 7️⃣ Levantar backend
 docker compose up -d backend
 
