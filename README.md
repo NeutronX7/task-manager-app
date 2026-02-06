@@ -5,7 +5,7 @@ Technical Test – Task Manager
 Aplicación de gestión de tareas desarrollada como prueba técnica, compuesta por un backend en Laravel y una aplicación móvil en React Native (Expo).
 
 📁 Estructura del proyecto
-/backend            → Laravel API (JWT Auth)
+/backend            → Laravel API (Sanctum Auth)
 /mobile-app         → Expo React Native app
 docker-compose.yml  → Entorno local con Docker
 
@@ -61,6 +61,8 @@ Disponible en: http://localhost:8000
 mysql → MySQL 8 (contenedor de base de datos)
 
 🚀 Levantar el backend (Laravel + MySQL)
+
+Primero se debe crear un archivo .env adentro del folder backend, este debe ser lo mismo que el .env.example
 
 Desde la raíz del proyecto:
 
@@ -179,7 +181,8 @@ Esto mostrará un QR, el cual puede escanearse con Expo Go para probar la aplica
 
 Registro e inicio de sesión
 
-Autenticación JWT
+Autenticación Sanctum
+Autenticación Sanctum
 
 CRUD de tareas
 

@@ -1,11 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import {
     ActivityIndicator,
+    Keyboard,
     Modal,
     Pressable,
     StyleSheet,
     Text,
     TextInput,
+    TouchableWithoutFeedback,
     View
 } from 'react-native'
 import { COLORS, Statuses } from '../constants'
@@ -80,7 +82,9 @@ export default function CreateTaskModal({
 
     return (
         <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={styles.backdrop}>
+                <TouchableWithoutFeedback onPress={() => {}} accessible={false}>
                 <View style={styles.card}>
                     <Text style={styles.title}>{mode === 'create' ? 'Nueva tarea' : 'Editar tarea'}</Text>
 
@@ -150,7 +154,9 @@ export default function CreateTaskModal({
                         </Pressable>
                     </View>
                 </View>
-            </View>
+                </TouchableWithoutFeedback>
+                </View>
+            </TouchableWithoutFeedback>
         </Modal>
     )
 }
