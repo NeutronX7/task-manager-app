@@ -2,14 +2,15 @@ Task Manager App
 
 Technical Test – Task Manager
 
-Aplicación de gestión de tareas desarrollada como prueba técnica, compuesta por un backend en Laravel y una aplicación móvil en React Native (Expo).
+Aplicación de gestión de tareas desarrollada como prueba técnica.
+Incluye un backend en Laravel y una aplicación móvil en React Native (Expo).
 
 📁 Estructura del proyecto
 /backend            → Laravel API (Sanctum Auth)
 /mobile-app         → Expo React Native app
 docker-compose.yml  → Entorno local con Docker
 
-🧩 Tecnologías utilizadas
+🧩 Tecnologías
 Backend
 
 Laravel
@@ -18,95 +19,74 @@ PHP 8.3
 
 MySQL 8
 
-Sanctum Auth
+Laravel Sanctum
 
 Docker / Docker Compose
 
 Mobile
 
-Yarn
-
 React Native
 
 Expo
 
+Yarn
+
 Axios
 
-Expo Go (para pruebas en dispositivo físico)
+Expo Go
 
 ⚙️ Requisitos
-
-Para poder probar la aplicación localmente se requiere:
 
 Docker
 
 Docker Compose
 
-Node.js (recomendado 18+ o 20+)
+Node.js (18+ recomendado)
 
-Expo Go (en dispositivo iOS o Android)
+Expo Go (iOS o Android)
 
-⚠️ El backend no está publicado en internet, por lo tanto Docker es obligatorio para levantar la API.
-
-🖥️ Backend – Laravel
-
-El backend está desarrollado en Laravel y se ejecuta completamente dentro de contenedores Docker.
-Incluye conexión a MySQL, autenticación sanctum y un CRUD completo de tareas.
-
-Servicios Docker
-
-backend → Laravel API
-Disponible en: http://localhost:8000
-
-mysql → MySQL 8 (contenedor de base de datos)
+⚠️ El backend no está publicado en internet, por lo que Docker es obligatorio para levantar la API.
 
 🚀 Levantar el backend (Laravel + MySQL)
+1️⃣ Crear archivo de entorno
 
-Primero se debe crear un archivo .env adentro del folder backend, este debe ser lo mismo que el .env.example
+Dentro del folder /backend, crear el archivo .env (puede copiarse desde .env.example).
+
+2️⃣ Levantar MySQL
 
 Desde la raíz del proyecto:
 
-docker compose up -d --build
+docker compose up -d mysql
 
-Preparar Laravel (solo la primera vez)
-docker compose exec backend composer install
-docker compose exec backend php artisan key:generate
-docker compose exec backend php artisan migrate
+3️⃣ Instalar dependencias de Laravel
+docker compose run --rm backend sh -lc \
+"composer config -g process-timeout 2000 && composer install --no-interaction --prefer-dist"
+
+4️⃣ Crear carpetas necesarias y permisos
+docker compose run --rm backend sh -lc \
+"mkdir -p bootstrap/cache storage/framework/{cache,sessions,views} storage/logs && chmod -R 775 bootstrap/cache storage"
+
+5️⃣ Generar APP_KEY
+docker compose run --rm backend php artisan key:generate
+
+6️⃣ Ejecutar migraciones
+docker compose run --rm backend php artisan migrate
+
+7️⃣ Levantar backend
+docker compose up -d backend
 
 
-Una vez completado, el backend estará disponible en:
+El backend quedará disponible en:
 
 http://localhost:8000
 
-🐳 Dockerfile del Backend
+📱 Probar la aplicación móvil (Expo)
 
-Se estandarizó un único Dockerfile para el backend, siguiendo la estructura solicitada en la prueba técnica.
+La app móvil se ejecuta con Expo y se abre usando Expo Go mediante un QR.
 
-El Dockerfile realiza lo siguiente:
+1️⃣ Configurar URL del backend
 
-Usa PHP 8.3 CLI
-
-Instala extensiones necesarias para Laravel y MySQL
-
-Incluye Composer
-
-Define el directorio de trabajo
-
-Expone el puerto 8000
-
-Inicia el servidor embebido de Laravel
-
-Para compilar y ejecutar el backend siempre se debe usar el docker-compose.yml ubicado en la raíz del proyecto.
-
-📱 Cómo probar la app móvil (modo evaluación)
-
-La aplicación móvil se ejecuta con Expo y se abre usando Expo Go escaneando un QR.
-
-1️⃣ Configurar la app móvil
-
-Es necesario configurar la URL del backend en el archivo .env de la app móvil.
-
-Obtener la IP local de la computadora
+Obtener la IP local de la computadora:
 
 Mac
 
@@ -117,7 +97,9 @@ Windows
 
 ipconfig
 
-Crear archivo .env en /mobile-app
+
+Crear el archivo /mobile-app/.env con una sola línea:
+
 EXPO_PUBLIC_API_URL=http://IP_LOCAL:8000
 
 
@@ -128,21 +110,22 @@ EXPO_PUBLIC_API_URL=http://192.168.1.25:8000
 
 📌 Importante:
 
-El teléfono debe estar en la misma red Wi-Fi que la computadora.
+El teléfono debe estar en la misma red Wi-Fi.
 
-No usar localhost en teléfonos físicos.
+No usar localhost en dispositivos físicos.
 
-2️⃣ Correr la app móvil (forma recomendada)
+2️⃣ Levantar la app móvil
 
-Desde la carpeta /mobile-app:
+Desde /mobile-app:
 
-yarn add
-yarn ios o android
+cd mobile-app
+yarn install
+npx expo start
 
 
 Esto mostrará un QR en la terminal.
 
-Abrir la app
+3️⃣ Abrir la app
 
 Instalar Expo Go en el teléfono
 
@@ -152,56 +135,29 @@ Escanear el QR
 
 La app se abrirá y se conectará automáticamente al backend
 
-🐳 Alternativa: correr todo con Docker (opcional)
-
-Si se desea levantar todo desde Docker, desde la raíz:
-
-docker compose up -d --build
-docker compose logs -f mobile-app
-
-
-Cuando aparezca el mensaje:
-
-Logs for your project will appear below
-
-
-En otra terminal ejecutar:
-
-docker exec -it manager_mobile sh
-
-
-Dentro del contenedor:
-
-npx expo start --tunnel --port 19000
-
-
-Esto mostrará un QR, el cual puede escanearse con Expo Go para probar la aplicación en un dispositivo físico.
-
 🧪 Funcionalidades implementadas
 
 Registro e inicio de sesión
 
-Autenticación Sanctum
-Autenticación Sanctum
+Autenticación con Laravel Sanctum
 
 CRUD de tareas
 
 Estados de tarea:
 
 Pendiente
+
 En progreso
+
 Completada
 
 Manejo de errores y loading states
 
-Arquitectura limpia (Container–Presenter en mobile)
+Arquitectura Container–Presenter (mobile)
 
-Repository + Service Layer en backend
+Repository + Service Layer (backend)
 
 📝 Notas finales
-
 El proyecto está diseñado para ser reproducible y evaluable localmente
-
 Docker garantiza un entorno consistente para el backend
-
-Expo Go simplifica la prueba de la aplicación móvil sin necesidad de builds nativos
+Expo Go permite probar la app móvil sin builds nativos
